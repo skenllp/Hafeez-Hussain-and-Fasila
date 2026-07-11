@@ -1,0 +1,431 @@
+/* ==========================================================================
+   TOKENS
+   ========================================================================== */
+:root{
+  --bg:            #13090a;
+  --bg-soft:       #1c0f10;
+  --card:          #241517;
+  --card-border:   rgba(205,164,94,0.22);
+  --gold:          #cda45e;
+  --gold-bright:   #e9c883;
+  --ivory:         #f2ecdc;
+  --muted:         #b0a59f;
+  --muted-dim:     #7d726b;
+
+  --font-display:  'Cormorant Garamond', serif;
+  --font-eyebrow:  'Cinzel', serif;
+  --font-body:     'EB Garamond', serif;
+  --font-arabic:   'Amiri', serif;
+
+  --section-pad: clamp(72px, 12vw, 128px);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+html{ scroll-behavior:smooth; }
+
+body{
+  background: var(--bg);
+  color: var(--ivory);
+  font-family: var(--font-body);
+  overflow-x:hidden;
+  position:relative;
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+}
+
+/* ==========================================================================
+   AMBIENT STAR FIELD
+   ========================================================================== */
+.star-field{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(233,200,131,0.5), transparent),
+    radial-gradient(1px 1px at 80% 15%, rgba(233,200,131,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 60% 70%, rgba(233,200,131,0.35), transparent),
+    radial-gradient(1px 1px at 30% 85%, rgba(233,200,131,0.4), transparent),
+    radial-gradient(1px 1px at 90% 60%, rgba(233,200,131,0.3), transparent),
+    radial-gradient(1.5px 1.5px at 45% 40%, rgba(233,200,131,0.3), transparent),
+    radial-gradient(1px 1px at 15% 55%, rgba(233,200,131,0.35), transparent);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  animation: twinkle 6s ease-in-out infinite alternate;
+}
+@keyframes twinkle{
+  from{ opacity:0.55; }
+  to{ opacity:1; }
+}
+
+/* ==========================================================================
+   SIGNATURE ELEMENT — MOON PHASE SCROLL PROGRESS
+   ========================================================================== */
+.moon-progress{
+  position:fixed;
+  bottom:24px; left:24px;
+  z-index:50;
+  width:46px; height:46px;
+  background:transparent;
+  border:none;
+  cursor:default;
+  filter: drop-shadow(0 0 6px rgba(205,164,94,0.35));
+}
+.moon-ring{ fill:none; stroke:rgba(205,164,94,0.35); stroke-width:1; }
+.moon-dark{ fill: var(--bg-soft); }
+.moon-light{
+  fill: var(--gold-bright);
+  transition: width 0.15s ease-out;
+}
+
+/* ==========================================================================
+   AUDIO TOGGLE
+   ========================================================================== */
+.audio-toggle{
+  position:fixed;
+  bottom:24px; right:24px;
+  z-index:50;
+  width:46px; height:46px;
+  border-radius:50%;
+  background: var(--card);
+  border:1px solid var(--card-border);
+  color: var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.audio-toggle:hover{ background: #2d1a1d; transform:scale(1.05); }
+.audio-toggle.playing svg{ animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.55; } }
+
+/* ==========================================================================
+   HERO
+   ========================================================================== */
+.hero{
+  position:relative;
+  min-height:100svh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  padding: 100px 24px 80px;
+  overflow:hidden;
+  z-index:1;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(205,164,94,0.10), transparent 55%),
+    var(--bg);
+}
+
+.hero-photo-frame{
+  position:absolute; inset:0;
+  z-index:0;
+}
+.hero-bg-image{
+  position:absolute; inset:0;
+  background-image: url('assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-veil{
+  position:absolute; inset:0; z-index:0;
+  background: linear-gradient(180deg, rgba(19,9,10,0.55) 0%, rgba(19,9,10,0.82) 55%, var(--bg) 100%);
+}
+
+.hero-content{ position:relative; z-index:1; max-width:720px; }
+
+.bismillah-arabic{
+  font-family: var(--font-arabic);
+  font-size: clamp(28px, 5vw, 42px);
+  color: var(--gold-bright);
+  line-height:1.4;
+  margin-bottom:10px;
+  animation: fadeUp 1s ease both;
+}
+.bismillah-en{
+  font-style:italic;
+  font-size:13px;
+  color: var(--muted);
+  letter-spacing:0.02em;
+  animation: fadeUp 1s ease 0.1s both;
+}
+
+.star-divider{
+  display:inline-flex; color: var(--gold);
+  margin: 26px 0;
+  animation: fadeUp 1s ease 0.2s both, spin 14s linear infinite;
+}
+.star-divider.small{ margin: 0 0 20px; }
+
+.eyebrow{
+  font-family: var(--font-eyebrow);
+  font-size:12px;
+  letter-spacing:0.32em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom: 22px;
+  animation: fadeUp 1s ease 0.3s both;
+}
+
+.names{
+  font-family: var(--font-display);
+  font-weight:400;
+  font-size: clamp(38px, 7vw, 68px);
+  line-height:1.15;
+  color: var(--ivory);
+  animation: fadeUp 1s ease 0.4s both;
+}
+.names .amp{
+  display:block;
+  font-style:italic;
+  color: var(--gold);
+  font-size:0.55em;
+  margin: 6px 0;
+}
+
+.hero-date{ margin-top:30px; animation: fadeUp 1s ease 0.5s both; }
+.date-en{
+  font-family: var(--font-eyebrow);
+  font-size:14px; letter-spacing:0.18em; text-transform:uppercase;
+  color: var(--ivory);
+}
+.date-hijri{
+  font-family: var(--font-eyebrow);
+  font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+  color: var(--gold);
+  margin-top:8px;
+}
+
+.hero-invite{
+  margin-top:26px;
+  font-style:italic;
+  color: var(--muted);
+  font-size:16px;
+  animation: fadeUp 1s ease 0.6s both;
+}
+
+.scroll-cue{
+  position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  z-index:1;
+}
+.scroll-cue span{
+  width:1px; height:34px;
+  background: linear-gradient(180deg, transparent, var(--gold));
+  animation: scrollLine 1.8s ease-in-out infinite;
+}
+.scroll-cue p{
+  font-family: var(--font-eyebrow);
+  font-size:10px; letter-spacing:0.2em; text-transform:uppercase;
+  color: var(--muted-dim);
+}
+
+@keyframes fadeUp{
+  from{ opacity:0; transform:translateY(18px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+@keyframes scrollLine{
+  0%{ transform:scaleY(0); transform-origin:top; opacity:0; }
+  40%{ transform:scaleY(1); transform-origin:top; opacity:1; }
+  60%{ transform:scaleY(1); transform-origin:bottom; opacity:1; }
+  100%{ transform:scaleY(0); transform-origin:bottom; opacity:0; }
+}
+@keyframes spin{
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(360deg); }
+}
+
+/* ==========================================================================
+   INVITE NOTE
+   ========================================================================== */
+.invite-note{
+  position:relative; z-index:1;
+  max-width:640px;
+  margin:0 auto;
+  padding: 90px 28px;
+  text-align:center;
+  display:flex; flex-direction:column; align-items:center;
+}
+.invite-note p{
+  font-size: clamp(17px, 2.4vw, 20px);
+  line-height:1.75;
+  color: var(--muted);
+  font-style:italic;
+}
+
+/* ==========================================================================
+   SHARED SECTION STYLES
+   ========================================================================== */
+.section{
+  position:relative; z-index:1;
+  padding: var(--section-pad) 24px;
+  text-align:center;
+  max-width:900px;
+  margin:0 auto;
+}
+.section-eyebrow{
+  font-family: var(--font-eyebrow);
+  font-size:11px; letter-spacing:0.28em; text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom:14px;
+}
+.section-title{
+  font-family: var(--font-display);
+  font-weight:400;
+  font-size: clamp(32px, 5vw, 48px);
+  color: var(--ivory);
+  margin-bottom:50px;
+}
+
+/* reveal-on-scroll */
+.reveal{ opacity:0; transform:translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.in{ opacity:1; transform:translateY(0); }
+
+/* ==========================================================================
+   OCCASION CARD
+   ========================================================================== */
+.occasion-card{
+  background: var(--card);
+  border:1px solid var(--card-border);
+  border-radius:4px;
+  padding: 44px clamp(20px,6vw,56px);
+  max-width:560px;
+  margin:0 auto;
+}
+.occasion-row{
+  display:flex; align-items:center; gap:20px;
+  text-align:left;
+  padding: 6px 0;
+}
+.occasion-icon{
+  flex:none;
+  width:46px; height:46px;
+  border-radius:50%;
+  border:1px solid var(--card-border);
+  display:flex; align-items:center; justify-content:center;
+  color: var(--gold);
+}
+.occasion-label{
+  font-family: var(--font-eyebrow);
+  font-size:10px; letter-spacing:0.16em; text-transform:uppercase;
+  color: var(--muted);
+  margin-bottom:4px;
+}
+.occasion-value{
+  font-family: var(--font-display);
+  font-size:22px;
+  color: var(--ivory);
+}
+.occasion-divider{
+  height:1px;
+  background: var(--card-border);
+  margin: 18px 0;
+}
+
+/* ==========================================================================
+   COUNTDOWN
+   ========================================================================== */
+.countdown-grid{
+  display:flex; justify-content:center; flex-wrap:wrap;
+  gap: clamp(10px, 2.4vw, 20px);
+}
+.count-box{
+  position:relative;
+  width: clamp(76px, 20vw, 108px);
+  padding: 22px 8px;
+  background: var(--card);
+  border:1px solid var(--card-border);
+}
+.count-box::before,
+.count-box::after{
+  content:"";
+  position:absolute; width:10px; height:10px;
+  border-color: var(--gold);
+  border-style:solid;
+  opacity:0.8;
+}
+.count-box::before{ top:-1px; left:-1px; border-width:1px 0 0 1px; }
+.count-box::after{ bottom:-1px; right:-1px; border-width:0 1px 1px 0; }
+
+.count-num{
+  display:block;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 40px);
+  color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
+}
+.count-label{
+  display:block;
+  margin-top:6px;
+  font-family: var(--font-eyebrow);
+  font-size:10px; letter-spacing:0.16em; text-transform:uppercase;
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   VENUE
+   ========================================================================== */
+.venue-card{
+  background: var(--card);
+  border:1px solid var(--card-border);
+  border-radius:4px;
+  padding: 44px clamp(20px,6vw,56px);
+  max-width:560px;
+  margin:0 auto;
+}
+.venue-name{
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 30px);
+  color: var(--ivory);
+  margin-bottom:16px;
+}
+.venue-address{
+  color: var(--muted);
+  font-size:16px;
+  line-height:1.8;
+  margin-bottom:28px;
+}
+.maps-btn{
+  display:inline-flex; align-items:center; gap:10px;
+  padding: 14px 28px;
+  border:1px solid var(--gold);
+  color: var(--gold-bright);
+  text-decoration:none;
+  font-family: var(--font-eyebrow);
+  font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+  border-radius: 999px;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.maps-btn:hover{ background: var(--gold); color:#171215; }
+
+/* ==========================================================================
+   THANK YOU
+   ========================================================================== */
+.thankyou{ padding-bottom:120px; }
+.thankyou-text{
+  color: var(--muted);
+  font-size:17px;
+  line-height:1.8;
+  max-width:480px;
+  margin: 0 auto 26px;
+}
+.thankyou-names{
+  font-family: var(--font-display);
+  font-style:italic;
+  font-size:26px;
+  color: var(--gold-bright);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width:480px){
+  .moon-progress, .audio-toggle{ width:40px; height:40px; }
+  .occasion-row{ gap:14px; }
+}
+
+/* Focus visibility */
+a:focus-visible, button:focus-visible{
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+}
