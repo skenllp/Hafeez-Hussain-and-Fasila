@@ -88,16 +88,32 @@ audioToggle.addEventListener('click', (e) => {
   }
 });
 
-// Attempt muted autoplay immediately on load (browsers allow this)
-// Audio will silently run; sound kicks in on first interaction
-bgAudio.muted = true;
-bgAudio.play().catch(() => {
-  // Muted autoplay also blocked — will start fresh on first interaction
+// ============================================================
+// SPLASH SCREEN — dismiss on "Open Invitation" click
+// ============================================================
+const splashOverlay = document.getElementById('splashOverlay');
+const openInvitationBtn = document.getElementById('openInvitationBtn');
+
+openInvitationBtn.addEventListener('click', () => {
+  // This is a guaranteed user gesture — audio will always play
+  ensureAudioPlaying();
+
+  // Animate the overlay out
+  splashOverlay.classList.add('hidden');
+
+  // Remove from DOM after transition so it doesn't block anything
+  splashOverlay.addEventListener('transitionend', () => {
+    splashOverlay.remove();
+  }, { once: true });
+
+  // Clean up the fallback interaction listeners (not needed anymore)
+  document.removeEventListener('click', onFirstInteraction);
+  document.removeEventListener('touchstart', onFirstInteraction);
 });
 
-// Listen for first click or touch to unmute
-document.addEventListener('click', onFirstInteraction);
-document.addEventListener('touchstart', onFirstInteraction, { passive: true });
+// No autoplay attempt on load — audio starts on splash dismiss instead
+// (Keeping toggle listener for pause/resume after invitation is opened)
+
 // ============================================================
 // REVEAL ON SCROLL
 // ============================================================
