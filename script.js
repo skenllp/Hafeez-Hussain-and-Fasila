@@ -40,46 +40,62 @@ updateCountdown();
 setInterval(updateCountdown, 1000);
 
 // ============================================================
-// MOON PHASE SCROLL PROGRESS (signature element)
-// ============================================================
-const moonFill = document.getElementById('moonFill');
-
-function updateMoonPhase(){
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
-
-  // Moon fills from new moon (0 width) to full moon (84 width, full circle)
-  const width = progress * 84;
-  moonFill.setAttribute('width', width.toFixed(2));
-  moonFill.setAttribute('x', (50 - width / 2).toFixed(2));
-}
-
-window.addEventListener('scroll', updateMoonPhase, { passive: true });
-updateMoonPhase();
-
-// ============================================================
-// AUDIO TOGGLE
+// AUDIO TOGGLE & AUTOPLAY
 // ============================================================
 const audioToggle = document.getElementById('audioToggle');
 const bgAudio = document.getElementById('bgAudio');
 let isPlaying = false;
 
-audioToggle.addEventListener('click', () => {
-  if (!isPlaying){
-    bgAudio.play().then(() => {
-      isPlaying = true;
-      audioToggle.classList.add('playing');
-    }).catch(() => {
-      // No audio file added yet — silently ignore until assets/music.mp3 exists
-      console.info('Add a track at assets/music.mp3 to enable music.');
+// Sync UI state with audio element events
+bgAudio.addEventListener('play', () => {
+  isPlaying = true;
+  audioToggle.classList.add('playing');
+});
+
+bgAudio.addEventListener('pause', () => {
+  isPlaying = false;
+  audioToggle.classList.remove('playing');
+});
+
+// Click handler toggles play/pause state
+audioToggle.addEventListener('click', (e) => {
+  e.stopPropagation(); // Avoid triggering document interaction fallback
+  if (bgAudio.paused) {
+    bgAudio.play().catch((err) => {
+      console.info('Playback failed or blocked:', err);
     });
   } else {
     bgAudio.pause();
-    isPlaying = false;
-    audioToggle.classList.remove('playing');
   }
 });
+
+// Attempt to start playback
+function attemptPlay() {
+  bgAudio.play().then(() => {
+    // If successfully playing, clean up interaction event listeners
+    cleanupListeners();
+  }).catch(() => {
+    // Autoplay blocked by browser policy; wait for user interaction
+  });
+}
+
+const startPlayOnInteraction = () => {
+  attemptPlay();
+};
+
+function cleanupListeners() {
+  document.removeEventListener('click', startPlayOnInteraction);
+  document.removeEventListener('scroll', startPlayOnInteraction);
+  document.removeEventListener('touchstart', startPlayOnInteraction);
+}
+
+// Initial trigger
+attemptPlay();
+
+// Fallbacks for browser autoplay restrictions
+document.addEventListener('click', startPlayOnInteraction);
+document.addEventListener('scroll', startPlayOnInteraction, { passive: true });
+document.addEventListener('touchstart', startPlayOnInteraction, { passive: true });
 
 // ============================================================
 // REVEAL ON SCROLL

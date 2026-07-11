@@ -59,25 +59,6 @@ body{
   to{ opacity:1; }
 }
 
-/* ==========================================================================
-   SIGNATURE ELEMENT — MOON PHASE SCROLL PROGRESS
-   ========================================================================== */
-.moon-progress{
-  position:fixed;
-  bottom:24px; left:24px;
-  z-index:50;
-  width:46px; height:46px;
-  background:transparent;
-  border:none;
-  cursor:default;
-  filter: drop-shadow(0 0 6px rgba(205,164,94,0.35));
-}
-.moon-ring{ fill:none; stroke:rgba(205,164,94,0.35); stroke-width:1; }
-.moon-dark{ fill: var(--bg-soft); }
-.moon-light{
-  fill: var(--gold-bright);
-  transition: width 0.15s ease-out;
-}
 
 /* ==========================================================================
    AUDIO TOGGLE
@@ -420,7 +401,7 @@ body{
    RESPONSIVE
    ========================================================================== */
 @media (max-width:480px){
-  .moon-progress, .audio-toggle{ width:40px; height:40px; }
+  .audio-toggle{ width:40px; height:40px; }
   .occasion-row{ gap:14px; }
 }
 
